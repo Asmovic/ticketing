@@ -13,7 +13,7 @@ export default () => {
         doRequest();
     }
     return <form onSubmit={onSubmit} className="container">
-        <h1>Sign Up</h1>
+        <h1>Sign In</h1>
         <div className="form-group">
             <label>Email Address</label>
             <input value={email} onChange={(e)=> setEmail(e.target.value)} className="form-control" />
@@ -23,6 +23,6 @@ export default () => {
             <input type="password" className="form-control" />
         </div>
         {errors}
-        <button type="submit" className="btn btn-primary mt-3">Sign Up</button>
+        <button type="submit" className="btn btn-primary mt-3">Sign In</button>
     </form>
 }
