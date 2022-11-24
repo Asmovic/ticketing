@@ -8,7 +8,6 @@ export default ({ url, method, body, onSuccess }) => {
             setErrors(null);
             const response = await axios[method](url, body);
             onSuccess && onSuccess(response.data);
-            console.log(response.data);
             return response.data;
         } catch(err) {
             setErrors(
