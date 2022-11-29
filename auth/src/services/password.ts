@@ -16,3 +16,5 @@ export class Password {
         return buf.toString("hex") === hashedPassword;
     }
 }
+
+/* 192.168.43.253 */
