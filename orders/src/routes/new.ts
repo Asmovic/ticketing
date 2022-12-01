@@ -10,7 +10,7 @@ const router = express.Router();
 const EXPIRATION_WINDOW_SECONDS = 15 * 60;
 
 router.post("/api/orders", requireAuth, [
-    body("tickedId")
+    body("ticketId")
     .notEmpty()
     .custom((input: string) => mongoose.Types.ObjectId.isValid(input))
     .withMessage("TicketId must be provided")

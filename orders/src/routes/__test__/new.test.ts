@@ -1,96 +1,53 @@
+import mongoose from "mongoose";
 import request from "supertest";
 import { app } from "../../app";
 import { Ticket } from "../../models/ticket";
-import { natsWrapper } from "../../nats-wrapper";
+import { Order, OrderStatus } from "../../models/order";
 
-it("has a route handler listening to /api/tickets for a post requests", async ()=>{
-    const response = await request(app)
-        .post("/api/tickets").send({});
-
-        expect(response.status).not.toEqual(404)
-})
-
-it("can only be access by authenticated Users", async ()=>{
-    const response = await request(app)
-    .post("/api/tickets").send({}).expect(401);
-})
-
-it("returns status other than 401 if user is signed in", async ()=>{
+it("returns an error if the ticket does not exist", async ()=>{
+    const ticketId = new mongoose.Types.ObjectId().toHexString(); 
     const cookie = global.signin();
     const response = await request(app)
-    .post("/api/tickets")
+    .post("/api/orders")
     .set('Cookie',cookie)
-    .send({});
-    
-    expect(response.status).not.toEqual(401)
+    .send({ ticketId })
+    .expect(404)
 })
 
-it("returns an error if an invalid title is provided", async ()=>{
-    await request(app)
-    .post("/api/tickets")
-    .set('Cookie', global.signin())
-    .send({
-        title: "",
+it("returns an error if the ticket is already reserved", async ()=>{
+    const cookie = global.signin();
+    const ticket = Ticket.build({
+        title: "WC Final",
         price: 30
-    })
-    .expect(400);
+    });
+    await ticket.save();
 
+    const order = Order.build({
+        ticket,
+        userId: "random id..",
+        status: OrderStatus.Created,
+        expiresAt: new Date()
+    });
+
+    await order.save();
     await request(app)
-    .post("/api/tickets")
-    .set('Cookie', global.signin())
-    .send({
+    .post("/api/orders")
+    .set('Cookie',cookie)
+    .send({ ticketId: ticket.id })
+    .expect(400)
+})
+
+it("reserves a ticket", async ()=>{
+    const cookie = global.signin();
+    const ticket = Ticket.build({
+        title: "WC Final",
         price: 30
-    })
-    .expect(400);
-})
-
-it("returns an error if an invalid price is provided", async ()=>{
-    await request(app)
-    .post("/api/tickets")
-    .set('Cookie', global.signin())
-    .send({
-        title: "vana",
-        price: -30
-    })
-    .expect(400);
+    });
+    await ticket.save();
 
     await request(app)
-    .post("/api/tickets")
-    .set('Cookie', global.signin())
-    .send({
-        title: "vana"
-    })
-    .expect(400);
-})
-
-it("creates a ticket with valid inputs", async ()=>{
-    let tickets = await Ticket.find({});
-    expect(tickets.length).toEqual(0);
-
-    await request(app)
-    .post("/api/tickets")
-    .set('Cookie', global.signin())
-    .send({
-        title: "vana",
-        price: 700
-    })
-    .expect(201);
-
-    tickets = await Ticket.find({});
-    expect(tickets.length).toEqual(1);
-    expect(tickets[0].price).toEqual(700);
-})
-
-it("publishes an event", async ()=>{
-    const title = "my title";
-    await request(app)
-    .post("/api/tickets")
-    .set('Cookie', global.signin())
-    .send({
-        title,
-        price: 30
-    })
+    .post("/api/orders")
+    .set('Cookie',cookie)
+    .send({ ticketId: ticket.id })
     .expect(201)
-
-    expect(natsWrapper.client.publish).toHaveBeenCalled()
 })

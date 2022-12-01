@@ -1,13 +1,15 @@
 import express, { Request, Response } from "express";
-import { Ticket } from "../models/ticket";
-import { NotFoundError } from "@asmovictickets/common";
+import { Order } from "../models/order";
+import { requireAuth } from "@asmovictickets/common";
 
 const router = express.Router();
 
-router.get("/api/tickets", async (req: Request, res: Response) => {
-    const tickets = await Ticket.find({});
+router.get("/api/orders", requireAuth, async (req: Request, res: Response) => {
+    const orders = await Order.find({
+        userId: req.currentUser!.id
+    }).populate("ticket")
 
-    res.status(200).send(tickets);
+    res.status(200).send(orders);
 });
 
-export { router as indexTicketRouter }
+export { router as indexOrderRouter }
