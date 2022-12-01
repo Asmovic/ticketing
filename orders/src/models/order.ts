@@ -29,7 +29,7 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: Object.values(OrderStatus),
-        default: OrderStatus.created
+        default: OrderStatus.Created
     },
     expiredAt: {
         type: mongoose.Schema.Types.Date
@@ -53,4 +53,4 @@ orderSchema.statics.build = (attrs: OrderAttrs) => {
 
 const Order = mongoose.model<OrderDoc,OrderModel>("Order", orderSchema);
 
-export { Order };
+export { Order, OrderStatus };
