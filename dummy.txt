@@ -1,0 +1,4 @@
+googleCloudBuild:
+projectId: ticketing-dev-368909
+
+image: us.gcr.io/ticketing-dev-368909/auth
