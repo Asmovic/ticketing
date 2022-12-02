@@ -34,9 +34,7 @@ it("fetches order for a particular user", async ()=>{
     .post("/api/orders")
     .set('Cookie',userTwo)
     .send({ ticketId: ticketTwo.id })
-    .expect(201)
-
-    console.log("orderOne", orderOne);
+    .expect(201);
 
     const { body: orderTwo } = await request(app)
     .post("/api/orders")
@@ -44,9 +42,6 @@ it("fetches order for a particular user", async ()=>{
     .send({ ticketId: ticketThree.id })
     .expect(201)
 
-    console.log("orderTwo", orderTwo);
-
-    
     // Make request to get orders for User #2
     const response = await request(app)
     .get("/api/orders")
