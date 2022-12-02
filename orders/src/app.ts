@@ -4,6 +4,7 @@ import { json } from "body-parser";
 import cookieSession from "cookie-session";
 import { errorHander, NotFoundError, currentUser } from "@asmovictickets/common";
 
+import { indexOrderRouter } from "./routes/index";
 import { createOrderRouter } from "./routes/new";
 
 const app = express();
@@ -17,8 +18,8 @@ app.use(cookieSession({
 
 app.use(currentUser);
 
+app.use(indexOrderRouter);
 app.use(createOrderRouter);
-
 
 app.all("*", async ()=>{
     throw new NotFoundError();
