@@ -43,9 +43,11 @@ router.post("/api/orders", requireAuth, [
     });
     await order.save();
 
+    console.log("order...", order);
+
     // Publish an order created event
 
-    new OrderCreatedPublisher(natsWrapper.client).publish({
+    await new OrderCreatedPublisher(natsWrapper.client).publish({
         id: order.id,
         status: order.status,
         userId: order.userId,
