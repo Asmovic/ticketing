@@ -2,6 +2,7 @@ import { BadRequestError, currentUser, NotAuthorizedError, NotFoundError, OrderS
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import { Order } from "../models/order";
+import { stripe } from "../stripe";
 
 const router = express.Router();
 
@@ -23,6 +24,16 @@ router.post("/api/payments", requireAuth, [
     if(order.status === OrderStatus.Cancelled) {
         throw new BadRequestError("Cannot pay for a cancelled order")
     }
+
+
+    // `source` is obtained with Stripe.js; see https://stripe.com/docs/payments/accept-a-payment-charges#web-create-token
+    const charge = await stripe.charges.create({
+    amount: order.price * 100,
+    currency: 'usd',
+    source: token
+    });
+
+    res.status(201).send({ success: true });
 });
 
 export { router as createChargeRouter }
