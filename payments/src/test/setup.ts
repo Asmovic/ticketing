@@ -18,6 +18,8 @@ jest.mock("../nats-wrapper.ts")
     }
   } */
 
+  process.env.STRIPE_KEY = "sk_test_51MCjBIKcWQZf5OubupjfQNQL6cl5KOpXzQl33LZ0r4MfwJaRHOX4Kf103otcW7rHu3UlskMy4zrrdsqL2sphYXv400s7qMoVD7";
+
 let mongo:any;
 beforeAll(async () => {
     process.env.JWT_KEY = "asdfhgf";

@@ -3,9 +3,10 @@ import mongoose from "mongoose"
 import request from "supertest"
 import { app } from "../../app"
 import { Order } from "../../models/order"
+import { Payment } from "../../models/payment"
 import { stripe } from "../../stripe"
 
-jest.mock("../../stripe")
+/* jest.mock("../../stripe") */
 
 it("returns 404 when purchasing an order that does not exist", async () => {
     await request(app)
@@ -37,7 +38,7 @@ it("returns a 401 when purchasing an order that does not belong to the user", as
             orderId: order.id
         })
         .expect(401)
-}, 40000)
+}, 100000)
 
 
 it("returns a 400 when purchasing a cancelled order", async () => {
@@ -64,11 +65,12 @@ it("returns a 400 when purchasing a cancelled order", async () => {
 
 it("returns a 201 with valid inputs", async () => {
     const userId = new mongoose.Types.ObjectId().toHexString();
+    const price = Math.floor(Math.random() * 100000);
     const order = Order.build({
         id: new mongoose.Types.ObjectId().toHexString(),
         userId,
         version: 0,
-        price: 100,
+        price,
         status: OrderStatus.Created
     })
 
@@ -83,9 +85,23 @@ it("returns a 201 with valid inputs", async () => {
         })
         .expect(201)
 
-    const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
+    /* const chargeOptions = (stripe.charges.create as jest.Mock).mock.calls[0][0];
 
     expect(chargeOptions.source).toEqual("tok_visa");
     expect(chargeOptions.amount).toEqual(100 * 100);
-    expect(chargeOptions.currency).toEqual("usd");
-})
+    expect(chargeOptions.currency).toEqual("usd"); */
+
+    const stripeCharges = await stripe.charges.list({ limit: 50 });
+    const stripeCharge = stripeCharges.data.find(charge => {
+        return charge.amount === price * 100;
+    })
+    
+    expect(stripeCharge).toBeDefined();
+    expect(stripeCharge!.currency).toEqual("usd");
+
+    const payment = await Payment.findOne({
+        orderId: order.id,
+        stripeId: stripeCharge!.id
+    }); 
+    expect(payment).not.toBeNull();
+}, 30000)
