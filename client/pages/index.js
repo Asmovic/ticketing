@@ -1,5 +1,4 @@
 import "bootstrap/dist/css/bootstrap.css";
-import buildClient from "../api/build-client";
 
 const LandingPage = ({ currentUser }) => {
     return currentUser ? (
@@ -9,11 +8,8 @@ const LandingPage = ({ currentUser }) => {
         )
 }
 
-LandingPage.getInitialProps = async (context) => {
-    console.log("Landing Page")
-    const client = buildClient(context);
-    const { data } = await client.get("/api/users/currentuser");
-    return data;
+LandingPage.getInitialProps = async (context, client, currentUser) => {
+    return {};
 }
 
 export default LandingPage;
