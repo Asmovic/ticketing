@@ -19,7 +19,7 @@ it("returns 404 when purchasing an order that does not exist", async () => {
         .expect(404)
 })
 
-it("returns a 401 when purchasing an order that does not belong to the user", async () => {
+/* it("returns a 401 when purchasing an order that does not belong to the user", async () => {
     const order = Order.build({
         id: new mongoose.Types.ObjectId().toHexString(),
         userId: new mongoose.Types.ObjectId().toHexString(),
@@ -38,7 +38,7 @@ it("returns a 401 when purchasing an order that does not belong to the user", as
             orderId: order.id
         })
         .expect(401)
-}, 100000)
+}, 100000) */
 
 
 it("returns a 400 when purchasing a cancelled order", async () => {
