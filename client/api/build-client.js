@@ -4,7 +4,7 @@ export default ({ req }) => {
     if(typeof window === "undefined") {
         // We are on server
         return axios.create({
-            baseURL: "http://ingress-nginx-controller.ingress-nginx.svc.cluster.local", 
+            baseURL: "wwww.ticket-booth-app.store", 
             headers: req.headers
             });
     } else {
