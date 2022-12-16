@@ -4,7 +4,7 @@ export default ({ req }) => {
     if(typeof window === "undefined") {
         // We are on server
         return axios.create({
-            baseURL: "wwww.ticket-booth-app.store", 
+            baseURL: "www.ticket-booth-app.store", 
             headers: req.headers
             });
     } else {
