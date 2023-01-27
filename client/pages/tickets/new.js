@@ -40,7 +40,7 @@ const NewTicket = () => {
                     <input onBlur={onBlur} value={price} onChange={(e)=> setPrice(e.target.value)} className="form-control"/>
                 </div>
                 {errors}
-                <button className="btn btn-primary">Submit</button>
+                <button className="btn btn-primary mt-3">Submit</button>
             </form>
         </div>
     )
